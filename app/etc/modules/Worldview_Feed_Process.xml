@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Worldview_Feed_Process>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Worldview_Base/>
+                <Worldview_Feed_Source/>
+            </depends>
+        </Worldview_Feed_Process>
+    </modules>
+</config>

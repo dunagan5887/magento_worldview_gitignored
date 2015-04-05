@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <worldview  translate="title" module="worldview_feed_source">
+            <title>Worldview</title>
+            <sort_order>1</sort_order>
+        </worldview>
+    </menu>
+</config>

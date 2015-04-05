@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Worldview_Feed_Process>
+            <version>0.0.1</version>
+        </Worldview_Feed_Process>
+    </modules>
+
+    <global>
+        <models>
+            <worldview_feed_process>
+                <class>Worldview_Feed_Process_Model</class>
+            </worldview_feed_process>
+        </models>
+
+        <helpers>
+            <worldview_feed_process>
+                <class>Worldview_Feed_Process_Helper</class>
+            </worldview_feed_process>
+        </helpers>
+
+        <blocks>
+            <worldview_feed_process>
+                <class>Worldview_Feed_Process_Block</class>
+            </worldview_feed_process>
+        </blocks>
+
+        <resources>
+            <worldview_feed_process_setup>
+                <setup>
+                    <module>Worldview_Feed_Process</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </worldview_feed_process_setup>
+        </resources>
+    </global>
+
+    <default>
+        <worldview_feed_process>
+            <article_retrieval>
+                <rss>worldview_feed_process/retrieval_rss</rss>
+            </article_retrieval>
+        </worldview_feed_process>
+    </default>
+</config>
