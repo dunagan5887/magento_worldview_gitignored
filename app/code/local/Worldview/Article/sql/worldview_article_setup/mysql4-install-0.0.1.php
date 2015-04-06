@@ -52,9 +52,9 @@ $articleEntityTable =
         array('feed_source_id'),
         array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX)
     )->addForeignKey(
-        $installer->getFkName('worldview_article/entity', 'feed_source_id', 'worldview_feed_source/entity', 'entity_id'),
+        $installer->getFkName('worldview_article/entity', 'feed_source_id', 'worldview_source/entity', 'entity_id'),
         'feed_source_id',
-        $installer->getTable('worldview_feed_source/entity'),
+        $installer->getTable('worldview_source/entity'),
         'entity_id',
         Varien_Db_Ddl_Table::ACTION_CASCADE,
         Varien_Db_Ddl_Table::ACTION_CASCADE
