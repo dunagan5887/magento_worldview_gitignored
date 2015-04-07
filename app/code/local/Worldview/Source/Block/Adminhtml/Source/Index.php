@@ -1,6 +1,12 @@
 <?php
+/**
+ * Author: Sean Dunagan
+ * Created: 4/7/15
+ *
+ * Class Worldview_Source_Block_Adminhtml_Source_Grid_Index
+ */
 
-class Worldview_Source_Block_Adminhtml_Source_Container
+class Worldview_Source_Block_Adminhtml_Source_Index
     extends Dunagan_Base_Block_Adminhtml_Widget_Grid_Container
 {
     public function __construct()

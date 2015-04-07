@@ -2,28 +2,31 @@
 /**
  * Author: Sean Dunagan
  * Created: 04/06/2015
+ *
  * Class Worldview_Base_Controller_Adminhtml_Abstract
  */
 
-abstract class Dunagan_Base_Controller_Adminhtml_Abstract extends Mage_Adminhtml_Controller_Action
+abstract class Dunagan_Base_Controller_Adminhtml_Abstract
+    extends Mage_Adminhtml_Controller_Action
+    implements Dunagan_Base_Controller_Adminhtml_Interface
 {
-    abstract public function getModuleClassname();
+    // Documentation for these abstract classes is given in Dunagan_Base_Controller_Adminhtml_Interface
+    abstract public function getModuleGroupname();
 
-    abstract public function getModuleInstance();
+    abstract public function getControllerActiveMenuPath();
 
     abstract public function getModuleInstanceDescription();
 
-    abstract public function getBlockName();
+    abstract public function getIndexBlockName();
 
     public function indexAction()
     {
-        $module_instance = $this->getModuleInstance();
-        $module_groupname = $this->getModuleClassname();
+        $module_groupname = $this->getModuleGroupname();
         $module_description = $this->getModuleInstanceDescription();
-        $module_block_classname = $module_groupname . '/' . $this->getBlockName();
+        $module_block_classname = $module_groupname . '/' . $this->getIndexBlockName();
 
         $this->loadLayout()
-            ->_setActiveMenu($module_instance)
+            ->_setActiveMenuValue()
             ->_setSetupTitle(Mage::helper($module_groupname)->__($module_description))
             ->_addBreadcrumb()
             ->_addBreadcrumb(Mage::helper($module_groupname)->__($module_description), Mage::helper($module_groupname)->__($module_description))
@@ -46,7 +49,7 @@ abstract class Dunagan_Base_Controller_Adminhtml_Abstract extends Mage_Adminhtml
 
     protected function _addBreadcrumb($label = null, $title = null, $link=null)
     {
-        $module_groupname = $this->getModuleClassname();
+        $module_groupname = $this->getModuleGroupname();
         $module_description = $this->getModuleInstanceDescription();
 
         if (is_null($label))
@@ -60,15 +63,14 @@ abstract class Dunagan_Base_Controller_Adminhtml_Abstract extends Mage_Adminhtml
         return parent::_addBreadcrumb($label, $title, $link);
     }
 
-    protected function _setActiveMenu($menu_name)
+    protected function _setActiveMenuValue()
     {
-        $full_menu_name = $this->getModuleClassname() . '/' . $menu_name;
-        return parent::_setActiveMenu($full_menu_name);
+        return parent::_setActiveMenu($this->getControllerActiveMenuPath());
     }
 
     protected function _isAllowed()
     {
-        $admin_path = $this->getModuleClassname() . '/' . $this->getModuleInstance();
-        return Mage::getSingleton('admin/session')->isAllowed($admin_path);
+        return Mage::getSingleton('admin/session')
+                    ->isAllowed($this->getControllerActiveMenuPath());
     }
 }

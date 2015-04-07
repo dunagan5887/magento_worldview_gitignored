@@ -3,7 +3,10 @@
 /**
  * Author: Sean Dunagan
  * Created: 04/06/2015
+ *
  * Class Worldview_Base_Block_Adminhtml_Widget_Grid
+ *
+ * This class expects the controller to a descendant of class Worldview_Base_Controller_Adminhtml_Abstract
  */
 
 class Dunagan_Base_Block_Adminhtml_Widget_Grid
@@ -15,7 +18,8 @@ class Dunagan_Base_Block_Adminhtml_Widget_Grid
     {
         parent::__construct();
         $controllerAction = $this->getAction();
-        $grid_id = $controllerAction->getModuleClassname() . '_' . $controllerAction->getModuleInstance();
+        $grid_path = str_replace('/', '_', $controllerAction->getControllerActiveMenuPath());
+        $grid_id = $controllerAction->getModuleGroupname() . '_' . $grid_path;
 
         $this->setId($grid_id);
         $this->setUseAjax(false);
@@ -27,8 +31,8 @@ class Dunagan_Base_Block_Adminhtml_Widget_Grid
         if (is_null($this->_translationHelper))
         {
             $controllerAction = $this->getAction();
-            $module_classname = $controllerAction->getModuleClassname();
-            $this->_translationHelper = Mage::helper($module_classname);
+            $module_groupname = $controllerAction->getModuleGroupname();
+            $this->_translationHelper = Mage::helper($module_groupname);
         }
 
         return $this->_translationHelper;

@@ -1,7 +1,7 @@
 <?php
 
 
-class Worldview_Source_Block_Adminhtml_Source_Container_Grid
+class Worldview_Source_Block_Adminhtml_Source_Index_Grid
     extends Dunagan_Base_Block_Adminhtml_Widget_Grid
 {
     protected function _prepareCollection()

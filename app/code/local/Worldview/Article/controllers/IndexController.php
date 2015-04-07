@@ -6,16 +6,18 @@
  * Class Worldview_Article_IndexController
  */
 
-class Worldview_Article_IndexController extends Dunagan_Base_Controller_Adminhtml_Abstract
+class Worldview_Article_IndexController
+    extends Dunagan_Base_Controller_Adminhtml_Abstract
+    implements Dunagan_Base_Controller_Adminhtml_Interface
 {
-    public function getModuleClassname()
+    public function getModuleGroupname()
     {
         return 'worldview_article';
     }
 
-    public function getModuleInstance()
+    public function getControllerActiveMenuPath()
     {
-        return 'article';
+        return 'worldview/articles/view_articles';
     }
 
     public function getModuleInstanceDescription()
