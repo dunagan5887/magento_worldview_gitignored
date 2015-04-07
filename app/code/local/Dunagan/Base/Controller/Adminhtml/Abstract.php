@@ -19,6 +19,9 @@ abstract class Dunagan_Base_Controller_Adminhtml_Abstract
 
     abstract public function getIndexBlockName();
 
+    // The following is accessible via accessor method getModuleHelper()
+    protected $_moduleHelper = null;
+
     public function indexAction()
     {
         $module_groupname = $this->getModuleGroupname();
@@ -72,5 +75,16 @@ abstract class Dunagan_Base_Controller_Adminhtml_Abstract
     {
         return Mage::getSingleton('admin/session')
                     ->isAllowed($this->getControllerActiveMenuPath());
+    }
+
+    public function getModuleHelper()
+    {
+        if (is_null($this->_moduleHelper))
+        {
+            $module_groupname = $this->getModuleGroupname();
+            $this->_moduleHelper = Mage::helper($module_groupname);
+        }
+
+        return $this->_moduleHelper;
     }
 }

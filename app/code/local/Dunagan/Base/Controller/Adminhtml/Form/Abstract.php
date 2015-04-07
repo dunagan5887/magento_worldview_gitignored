@@ -84,11 +84,11 @@ abstract class Dunagan_Base_Controller_Adminhtml_Form_Abstract
         if ($object_id)
         {
             $object_classname = $this->_getObjectClassname();
-            $objectToInitialize = Mage::getModel($object_classname)
-                                    ->load($object_id);
-            if ($objectToInitialize->getId())
+            $objectToInitialize = Mage::getModel($object_classname)->load($object_id);
+            if (is_object($objectToInitialize) && $objectToInitialize->getId())
             {
-                return $objectToInitialize;
+                $this->_objectToEdit = $objectToInitialize;
+                return $this->_objectToEdit;
             }
         }
         return false;

@@ -31,8 +31,7 @@ class Dunagan_Base_Block_Adminhtml_Widget_Grid
         if (is_null($this->_translationHelper))
         {
             $controllerAction = $this->getAction();
-            $module_groupname = $controllerAction->getModuleGroupname();
-            $this->_translationHelper = Mage::helper($module_groupname);
+            $this->_translationHelper = $controllerAction->getModuleHelper();
         }
 
         return $this->_translationHelper;

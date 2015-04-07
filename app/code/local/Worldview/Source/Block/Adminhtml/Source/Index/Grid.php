@@ -49,6 +49,7 @@ class Worldview_Source_Block_Adminhtml_Source_Index_Grid
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/*/edit', array('channel' => $row->getId()));
+        $url_param_name = $this->getAction()->getObjectParamName();
+        return $this->getUrl('*/*/edit', array($url_param_name => $row->getId()));
     }
 }
