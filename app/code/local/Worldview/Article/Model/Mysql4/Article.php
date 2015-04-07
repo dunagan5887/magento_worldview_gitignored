@@ -7,6 +7,6 @@ class Worldview_Article_Model_Mysql4_Article extends Mage_Core_Model_Mysql4_Abst
 {
     public function _construct()
     {
-        $this->_init('worldview_article/article', 'entity_id');
+        $this->_init('worldview_article/entity', 'entity_id');
     }
 }

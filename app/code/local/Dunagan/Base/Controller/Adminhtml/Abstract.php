@@ -1,6 +1,11 @@
 <?php
+/**
+ * Author: Sean Dunagan
+ * Created: 04/06/2015
+ * Class Worldview_Base_Controller_Adminhtml_Abstract
+ */
 
-abstract class Worldview_Base_Controller_Adminhtml_Abstract extends Mage_Adminhtml_Controller_Action
+abstract class Dunagan_Base_Controller_Adminhtml_Abstract extends Mage_Adminhtml_Controller_Action
 {
     abstract public function getModuleClassname();
 

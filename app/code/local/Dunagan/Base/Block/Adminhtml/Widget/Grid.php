@@ -1,7 +1,12 @@
 <?php
 
+/**
+ * Author: Sean Dunagan
+ * Created: 04/06/2015
+ * Class Worldview_Base_Block_Adminhtml_Widget_Grid
+ */
 
-class Worldview_Base_Block_Adminhtml_Widget_Grid
+class Dunagan_Base_Block_Adminhtml_Widget_Grid
     extends Mage_Adminhtml_Block_Widget_Grid
 {
     protected $_translationHelper = null;

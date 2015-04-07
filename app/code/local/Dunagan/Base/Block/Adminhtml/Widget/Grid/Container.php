@@ -1,11 +1,13 @@
 <?php
-
 /**
- * This class expects the controller to a descendant of class Worldview_Base_Controller_Adminhtml_Abstract
+ * Author: Sean Dunagan
+ * Created: 04/06/2015
+ * Class Dunagan_Base_Block_Adminhtml_Widget_Grid_Container
  *
- * Class Worldview_Base_Block_Adminhtml_Widget_Grid_Container
+ * This class expects the controller to a descendant of class Worldview_Base_Controller_Adminhtml_Abstract
  */
-class Worldview_Base_Block_Adminhtml_Widget_Grid_Container
+
+class Dunagan_Base_Block_Adminhtml_Widget_Grid_Container
     extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
     public function __construct()

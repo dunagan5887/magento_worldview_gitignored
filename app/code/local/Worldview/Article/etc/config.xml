@@ -45,4 +45,16 @@
             </worldview_article_setup>
         </resources>
     </global>
+
+    <admin>
+        <routers>
+            <worldview_article>
+                <use>admin</use>
+                <args>
+                    <module>Worldview_Article</module>
+                    <frontName>worldview_article</frontName>
+                </args>
+            </worldview_article>
+        </routers>
+    </admin>
 </config>

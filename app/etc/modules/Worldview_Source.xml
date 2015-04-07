@@ -6,6 +6,7 @@
             <codePool>local</codePool>
             <dpends>
                 <Worldview_Base/>
+                <Dunagan_Base/>
             </dpends>
         </Worldview_Source>
     </modules>

@@ -1,14 +1,12 @@
 <?xml version="1.0"?>
 <config>
     <modules>
-        <Worldview_Article>
+        <Dunagan_Base>
             <active>true</active>
             <codePool>local</codePool>
             <depends>
-                <Worldview_Base/>
-                <Worldview_Source/>
-                <Dunagan_Base/>
+                <Mage_Adminhtml/>
             </depends>
-        </Worldview_Article>
+        </Dunagan_Base>
     </modules>
 </config>

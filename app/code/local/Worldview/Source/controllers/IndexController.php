@@ -1,6 +1,6 @@
 <?php
 
-class Worldview_Source_IndexController extends Worldview_Base_Controller_Adminhtml_Abstract
+class Worldview_Source_IndexController extends Dunagan_Base_Controller_Adminhtml_Abstract
 {
     public function getModuleClassname()
     {

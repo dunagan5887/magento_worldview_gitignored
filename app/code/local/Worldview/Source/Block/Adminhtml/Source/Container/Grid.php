@@ -2,7 +2,7 @@
 
 
 class Worldview_Source_Block_Adminhtml_Source_Container_Grid
-    extends Worldview_Base_Block_Adminhtml_Widget_Grid
+    extends Dunagan_Base_Block_Adminhtml_Widget_Grid
 {
     protected function _prepareCollection()
     {
