@@ -14,8 +14,17 @@ abstract class Dunagan_Base_Controller_Adminhtml_Form_Abstract
     implements Dunagan_Base_Controller_Adminhtml_Form_Interface
 {
     const ERROR_INVALID_OBJECT_ID = 'No object with classname %s and id %s was found in the database.';
+    const ERROR_NON_PERMITTED_FIELDS_UPDATE = 'An attempt was made to modify field(s) "%s" on a %s object. No hacking of html is allowed :)';
+    const ERROR_REQUIRED_FIELDS_NOT_POSTED = 'No values for required field(s) "%s" were posted for the %s object being saved. Please include the missing data and try again.';
+    const EXCEPTION_DURING_SAVE_ACTION = 'An exception occurred while attempting to %s: %s';
+    const SUCCESS_OBJECT_SUCESSFULLY_CREATED = '%s has been successfully created.';
+    const SUCCESS_OBJECT_SUCESSFULLY_UPDATED = '%s has been successfully updated.';
 
     // Documentation for these abstract classes is given in Dunagan_Base_Controller_Adminhtml_Form_Interface
+    abstract public function validateDataAndCreateObject($objectToSave, $posted_object_data);
+
+    abstract public function validateDataAndUpdateObject($objectToSave, $posted_object_data);
+
     abstract public function getObjectParamName();
 
     abstract public function getObjectDescription();
@@ -28,6 +37,11 @@ abstract class Dunagan_Base_Controller_Adminhtml_Form_Abstract
 
     // This class will set this field. It's accessor is given below as getObjectToEdit()
     protected $_objectToEdit = null;
+
+    public function newAction()
+    {
+        $this->_redirect('*/*/edit');
+    }
 
     public function editAction()
     {
@@ -78,6 +92,88 @@ abstract class Dunagan_Base_Controller_Adminhtml_Form_Abstract
         }
     }
 
+    public function saveAction()
+    {
+        $objectToSave = $this->_initializeObjectFromParam();
+        $object_id = $this->getRequest()->getParam($this->getObjectParamName());
+
+        if ($object_id && !is_object($objectToSave))
+        {
+            // Object Id was provided but an object was not returned from _initializeObjectFromParam()
+            $error_message = sprintf(self::ERROR_INVALID_OBJECT_ID, $this->_getObjectClassname(), $object_id);
+            $error_message .= ' ' . $this->getObjectDescription() . ' update will not occur.';
+            $this->_getSession()->addError(Mage::helper($this->getModuleGroupname())->__($error_message));
+            $this->_redirect($this->getFullBackControllerActionPath());
+        }
+        else
+        {
+            // The following line is used in the event that we have to log an exception
+            $action_occurring = is_object($objectToSave) ? 'update' : 'create';
+            try
+            {
+                $form_element_array_name = $this->getFormElementArrayName();
+                $posted_object_data = $this->getRequest()->getParam($form_element_array_name);
+
+                if (!is_object($objectToSave))
+                {
+                    // User is trying to create a new object
+                    $object_classname = $this->_getObjectClassname();
+                    $objectToSave = Mage::getModel($object_classname);
+                    $objectToSave->setCreatedAt(Mage::getModel('core/date')->date());
+
+                    $this->validateDataAndCreateObject($objectToSave, $posted_object_data);
+
+                    $success_message = sprintf(self::SUCCESS_OBJECT_SUCESSFULLY_CREATED, $this->getObjectDescription());
+                }
+                else
+                {
+                    $this->validateDataAndUpdateObject($objectToSave, $posted_object_data);
+                    $success_message = sprintf(self::SUCCESS_OBJECT_SUCESSFULLY_UPDATED, $this->getObjectDescription());
+                }
+
+                $objectToSave->save();
+                $this->_getSession()->addSuccess(
+                    Mage::helper($this->getModuleGroupname())->__($success_message)
+                );
+                $redirect_argument = array($this->getObjectParamName() => $objectToSave->getId());
+            }
+            catch(Dunagan_Base_Model_Adminhtml_Exception $e)
+            {
+                // If we catch an exception of this type, we assume the error message is already specific to this context
+                $redirect_argument = $this->_logExceptionAndReturnRedirectArgument($e, $objectToSave);
+            }
+            catch(Exception $e)
+            {
+                // TODO TEST THIS
+                // If we catch a general exception, describe the context we are working in
+                $action_description = strcmp($action_occurring, 'create')
+                                        ? sprintf('update %s with id %s ', $this->getObjectDescription(), $object_id)
+                                        : sprintf('create a new %s object ', $this->getObjectDescription());
+
+                $error_message = sprintf(self::EXCEPTION_DURING_SAVE_ACTION, $action_description, $e->getMessage());
+
+                $exceptionToLog = new Exception($error_message);
+                $redirect_argument = $this->_logExceptionAndReturnRedirectArgument($exceptionToLog, $objectToSave);
+            }
+
+            $this->_redirect('*/*/edit', $redirect_argument);
+        }
+    }
+
+    protected function _logExceptionAndReturnRedirectArgument(Exception $exceptionToLog, $objectBeingActedUpon)
+    {
+        Mage::log($exceptionToLog->getMessage());
+        Mage::logException($exceptionToLog);
+        $this->_getSession()->addError(
+            Mage::helper($this->getModuleGroupname())->__($exceptionToLog->getMessage())
+        );
+        $redirect_argument = (is_object($objectBeingActedUpon))
+                                ?  array($this->getObjectParamName() => $objectBeingActedUpon->getId())
+                                : array();
+
+        return $redirect_argument;
+    }
+
     protected function _initializeObjectFromParam()
     {
         $object_id = $this->getRequest()->getParam($this->getObjectParamName());
@@ -113,9 +209,60 @@ abstract class Dunagan_Base_Controller_Adminhtml_Form_Abstract
     {
         return 'index/index';
     }
-    
+
+    public function getFullBackControllerActionPath()
+    {
+        $module_router = $this->getModuleGroupname();
+        return ($module_router . '/' . $this->getFormBackControllerActionPath());
+    }
+
+    public function getFormElementArrayName()
+    {
+        return ($this->getObjectParamName() . '_data');
+    }
+
     public function getObjectToEdit()
     {
         return $this->_objectToEdit;
+    }
+
+    protected function _assertDataIsRestrictedToFields($data_posted, $fields_to_restrict_to)
+    {
+        $non_permitted_fields = array_diff(array_keys($data_posted), $fields_to_restrict_to);
+        if (empty($non_permitted_fields))
+        {
+            return true;
+        }
+        // Fields which were not permitted to be edited were modified. Throw an exception
+        $non_permitted_fields_string = implode(', ', $non_permitted_fields);
+        $error_message = sprintf(self::ERROR_NON_PERMITTED_FIELDS_UPDATE, $non_permitted_fields_string, $this->getObjectDescription());
+        throw new Dunagan_Base_Model_Adminhtml_Exception($error_message);
+    }
+
+    protected function _assertRequiredFieldsAreIncluded($data_posted, $required_fields)
+    {
+        $required_fields_not_posted = array_diff($required_fields, array_keys($data_posted));
+        if (empty($required_fields_not_posted))
+        {
+            $required_fields_not_posted = array();
+            // Check to ensure that none of the required fields are empty
+            foreach ($required_fields as $field_to_check)
+            {
+                // The index in the $data_posted should be set due to our check above, but be extra careful
+                $posted_value = isset($data_posted[$field_to_check]) ? $data_posted[$field_to_check] : null;
+                if (is_null($posted_value) || !strcmp('', $posted_value))
+                {
+                    $required_fields_not_posted[$field_to_check] = $field_to_check;
+                }
+            }
+        }
+        if (!empty($required_fields_not_posted))
+        {
+            // Fields which were not permitted to be edited were modified. Throw an exception
+            $missing_fields_string = implode(', ', array_keys($required_fields_not_posted));
+            $error_message = sprintf(self::ERROR_REQUIRED_FIELDS_NOT_POSTED, $missing_fields_string, $this->getObjectDescription());
+            throw new Dunagan_Base_Model_Adminhtml_Exception($error_message);
+        }
+        return true;
     }
 }

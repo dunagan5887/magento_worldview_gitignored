@@ -14,6 +14,28 @@ interface Dunagan_Base_Controller_Adminhtml_Form_Interface
 {
     // The following methods are REQUIRED for all leaf classes which implement this interface
     /**
+     * This method should inspect the data being posted and validate it. If it is valid, it should set
+     *  the data on $objectToCreate
+     *
+     * @param $objectToCreate - New object being created
+     * @param $posted_object_data
+     * @return $objectToCreate - Should return the object which was passed in with data initialized appropriately.
+     *                          If there is an error with the data, should throw exception of type Dunagan_Base_Model_Adminhtml_Exception
+     */
+    public function validateDataAndCreateObject($objectToCreate, $posted_object_data);
+
+    /**
+     * This method should inspect the data being posted and validate it. If it is valid, it should set
+     *  the data on $objectToUpdate
+     *
+     * @param $objectToUpdate - Existing object being updated
+     * @param $posted_object_data
+     * @return $objectToUpdate - Should return the object which was passed in with data updated appropriately.
+     *                          If there is an error with the data, should throw exception of type Dunagan_Base_Model_Adminhtml_Exception
+     */
+    public function validateDataAndUpdateObject($objectToUpdate, $posted_object_data);
+
+    /**
      * Should be the name of whatever parameter will pass the object to be
      * created/edited/deleted's id to the controller
      *
@@ -23,7 +45,8 @@ interface Dunagan_Base_Controller_Adminhtml_Form_Interface
 
     /**
      * Should be a human readable description of what object this form is
-     *  creating/editing/deleting
+     *  creating/editing/deleting. This will likely be the same value as
+     *  Dunagan_Base_Controller_Adminhtml_Interface::getModuleInstanceDescription()
      *
      * e.g. Product or Category
      *

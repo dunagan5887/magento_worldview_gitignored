@@ -10,6 +10,8 @@ abstract class Dunagan_Base_Block_Adminhtml_Widget_Form
     extends Mage_Adminhtml_Block_Widget_Form
     implements Dunagan_Base_Block_Adminhtml_Widget_Form_Interface
 {
+    const FORM_ELEMENT_FIELD_NAME_TEMPLATE = '%s[%s]';
+
     abstract public function populateFormFieldset(Varien_Data_Form_Element_Fieldset $fieldset);
 
     protected $_objectToEdit = null;
@@ -25,11 +27,9 @@ abstract class Dunagan_Base_Block_Adminhtml_Widget_Form
     protected function _prepareForm()
     {
         $controllerAction = $this->getAction();
-        $form_element_id = $controllerAction->getObjectParamName() .'_edit_form';
-
         $helper = $controllerAction->getModuleHelper();
 
-        $form = new Varien_Data_Form(array('id' => $form_element_id, 'action' => $this->getActionUrl(), 'method' => 'post'));
+        $form = new Varien_Data_Form(array('id' => 'edit_form', 'action' => $this->getActionUrl(), 'method' => 'post'));
         $form->setUseContainer(true);
         $html_id_prefix = $controllerAction->getModuleGroupname() . '_';
         $form->setHtmlIdPrefix($html_id_prefix);
@@ -76,10 +76,11 @@ abstract class Dunagan_Base_Block_Adminhtml_Widget_Form
         $helper = $this->getAction()->getModuleHelper();
 
         $fieldset->addField($field, 'text', array(
-            'name'  => $field,
+            'name'  => $this->_getFormElementName($field),
             'label' => $helper->__($name),
             'title' => $helper->__($name),
-            'value'  => $this->_getValueIfObjectIsSet($field)
+            'value'  => $this->_getValueIfObjectIsSet($field),
+            'required' => ((bool)$required)
         ));
     }
 
@@ -124,13 +125,19 @@ abstract class Dunagan_Base_Block_Adminhtml_Widget_Form
         $helper = $this->getAction()->getModuleHelper();
 
         $fieldset->addField($field, 'select', array(
-            'name'  => $field,
+            'name'  => $this->_getFormElementName($field),
             'label' => $helper->__($name),
             'title' => $helper->__($name),
             'value'  => $this->_getValueIfObjectIsSet($field),
             'values'   => $options,
             'required' => $required
         ));
+    }
+
+    protected function _getFormElementName($field)
+    {
+        $array_name = $this->getAction()->getFormElementArrayName();
+        return sprintf(self::FORM_ELEMENT_FIELD_NAME_TEMPLATE, $array_name, $field);
     }
 
     protected function _getValueIfObjectIsSet($field)

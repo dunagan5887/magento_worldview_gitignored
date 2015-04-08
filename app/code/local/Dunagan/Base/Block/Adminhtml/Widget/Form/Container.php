@@ -14,7 +14,7 @@ class Dunagan_Base_Block_Adminhtml_Widget_Form_Container
     public function __construct()
     {
         $controllerAction = $this->getAction();
-        $this->_objectId = $controllerAction->getObjectParamName() .'_id';
+        $this->_objectId = $controllerAction->getObjectParamName();
         $this->_controller = $controllerAction->getFormBlockName();
         $this->_blockGroup = $controllerAction->getModuleGroupname();
 
@@ -29,7 +29,7 @@ class Dunagan_Base_Block_Adminhtml_Widget_Form_Container
 
     public function getBackUrl()
     {
-        $back_uri_path = $this->getFormBackUri();
+        $back_uri_path = $this->getAction()->getFullBackControllerActionPath();
         return $this->getUrl($back_uri_path);
     }
 
