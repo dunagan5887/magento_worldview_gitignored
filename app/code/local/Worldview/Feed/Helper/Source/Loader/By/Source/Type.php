@@ -17,6 +17,7 @@ class Worldview_Feed_Helper_Source_Loader_By_Source_Type
         $source_feed_type = $processModel->getCode();
         $sourceCollection = Mage::getModel('worldview_source/source')
                                 ->getCollection()
+                                ->addFieldToFilter('active', 1)
                                 ->addFieldToFilter('type', $source_feed_type);
 
         return $sourceCollection;

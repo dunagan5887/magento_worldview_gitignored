@@ -39,7 +39,7 @@ class Worldview_Feed_Helper_Article_Retrieval_Processor extends Worldview_Feed_H
 
         $dataRetrievalDelegate = $processModelToProcess->getDelegate(self::DATA_RETRIEVAL_DELEGATE_CODE);
         // TODO Check for correct interface for $dataRetrievalDelegate
-        $raw_article_data__by_source_code_array = $dataRetrievalDelegate->retrieveDataFromSourceCollection($sourceCollection);
+        $raw_article_data_by_source_code_array = $dataRetrievalDelegate->retrieveDataFromSourceCollection($sourceCollection);
     }
 
 

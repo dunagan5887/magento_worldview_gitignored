@@ -20,7 +20,7 @@ class Worldview_Feed_Helper_Data_Retriever_Rss
         foreach ($sourceCollection as $feedSource)
         {
             $feed_source_code = $feedSource->getCode();
-            $feed_source_article_set = array();
+            $raw_feed_source_article_set = array();
 
             try
             {
@@ -60,7 +60,7 @@ class Worldview_Feed_Helper_Data_Retriever_Rss
                             $article_data_array[$field] = $value->__toString();
                         }
 
-                        $feed_source_article_set[] = $article_data_array;
+                        $raw_feed_source_article_set[] = $article_data_array;
                     }
                     catch(Exception $e)
                     {
@@ -76,9 +76,17 @@ class Worldview_Feed_Helper_Data_Retriever_Rss
                 Mage::logException($exceptionToLog);
             }
 
-            $array_of_data_to_return[$feed_source_code] = $feed_source_article_set;
+            $processed_feed_article_set = $this->_processRawFeedData($feedSource, $raw_feed_source_article_set);
+            $array_of_data_to_return[$feed_source_code] = $processed_feed_article_set;
         }
 
         return $array_of_data_to_return;
+    }
+
+    protected function _processRawFeedData(Worldview_Source_Model_Source $feedSource, array $raw_feed_source_article_set)
+    {
+        $rawArticleDataProcessor = $feedSource->getRawDataProcessor();
+        $processed_article_data_array = $rawArticleDataProcessor->processRawArticleData($raw_feed_source_article_set);
+        return $processed_article_data_array;
     }
 }

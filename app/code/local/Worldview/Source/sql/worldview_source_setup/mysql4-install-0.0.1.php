@@ -59,6 +59,12 @@ $feedSourceEntityTable =
         20,
         array('nullable'  => false),
         'Feed Source Type e.g. RSS'
+    )->addColumn(
+        'raw_data_processor',
+        Varien_Db_Ddl_Table::TYPE_VARCHAR,
+        150,
+        array('nullable'  => false),
+        'The model used to convert raw feed data into article data fields'
     )->addIndex(
         $installer->getIdxName('worldview_source/entity', array('code')),
         array('code'),
