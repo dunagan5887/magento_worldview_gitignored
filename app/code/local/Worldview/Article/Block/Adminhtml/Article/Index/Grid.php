@@ -1,12 +1,11 @@
 <?php
-
 /**
  * Author: Sean Dunagan
  * Created: 4/6/15
  * Class Worldview_Article_Block_Adminhtml_Source_Container_Grid
  */
 
-class Worldview_Article_Block_Adminhtml_Article_Container_Grid
+class Worldview_Article_Block_Adminhtml_Article_Index_Grid
     extends Dunagan_Base_Block_Adminhtml_Widget_Grid
 {
     protected function _prepareCollection()

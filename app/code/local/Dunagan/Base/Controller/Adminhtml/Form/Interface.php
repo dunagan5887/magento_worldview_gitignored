@@ -85,6 +85,9 @@ interface Dunagan_Base_Controller_Adminhtml_Form_Interface
      */
     public function getFormActionsController();
 
+    // OPTIONAL
+
+
     // The following methods are OPTIONAL for classes which inherit from Dunagan_Base_Controller_Adminhtml_Form_Abstract
 
     /**

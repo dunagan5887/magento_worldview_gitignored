@@ -152,7 +152,7 @@ abstract class Dunagan_Base_Controller_Adminhtml_Form_Abstract
 
                 $error_message = sprintf(self::EXCEPTION_DURING_SAVE_ACTION, $action_description, $e->getMessage());
 
-                $exceptionToLog = new Exception($error_message);
+                $exceptionToLog = new Exception($error_message, $e->getCode(), $e);
                 $redirect_argument = $this->_logExceptionAndReturnRedirectArgument($exceptionToLog, $objectToSave);
             }
 

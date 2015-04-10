@@ -6,7 +6,7 @@
  * class Dunagan_Base_Model_Adminhtml_Exception
  */
 
-class Dunagan_Base_Model_Adminhtml_Exception extends Mage_Adminhtml_Exception
+class Dunagan_Base_Model_Adminhtml_Exception extends Dunagan_Base_Model_Exception
 {
 
 }
