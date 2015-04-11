@@ -16,7 +16,7 @@ class Worldview_Source_Helper_Raw_Data_Processor_Usatoday_World
     public function getFieldConversionArray()
     {
         $conversion_array = $this->_base_conversion_array;
-        $conversion_array[self::LINK_WORLDVIEW_APP_FIELD] = self::USATODAY_LINK_FEED_FIELD;
+        $conversion_array[Worldview_Source_Helper_Data::LINK_WORLDVIEW_APP_FIELD] = self::USATODAY_LINK_FEED_FIELD;
         return $conversion_array;
     }
 

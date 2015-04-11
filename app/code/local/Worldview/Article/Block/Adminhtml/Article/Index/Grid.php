@@ -10,7 +10,17 @@ class Worldview_Article_Block_Adminhtml_Article_Index_Grid
 {
     protected function _prepareCollection()
     {
-        $collection = Mage::getModel('worldview_article/article')->getCollection();
+        $collection = Mage::getModel('worldview_article/article')
+                        ->getCollection();
+
+        $source_table = $collection->getResource()->getTable('worldview_source/entity');
+
+        $collection->getSelect()->join(
+            array('source' => $source_table),
+            'source.entity_id=main_table.feed_source_id',
+            array('source.name' => "name")
+        );
+
         $this->setCollection($collection);
         return parent::_prepareCollection();
     }
@@ -19,7 +29,7 @@ class Worldview_Article_Block_Adminhtml_Article_Index_Grid
     {
         $this->addColumn('source', array(
             'header'    => $this->_getTranslationHelper()->__('Source'),
-            'width'     => '25',
+            'width'     => '100',
             'align'     => 'left',
             'index'     => 'source.name',
             'type'      => 'text'
@@ -32,6 +42,13 @@ class Worldview_Article_Block_Adminhtml_Article_Index_Grid
             'type'      => 'text'
         ));
 
+        $this->addColumn('link', array(
+            'header'    => $this->_getTranslationHelper()->__('Article Url'),
+            'align'     => 'left',
+            'index'     => 'link',
+            'type'      => 'text'
+        ));
+
         $this->addColumn('article_text', array(
             'header'    => $this->_getTranslationHelper()->__('Article Text'),
             'align'     => 'left',
@@ -39,12 +56,21 @@ class Worldview_Article_Block_Adminhtml_Article_Index_Grid
             'type'      => 'text'
         ));
 
-        $this->addColumn('created_at', array(
-            'header'    => $this->_getTranslationHelper()->__('Created At'),
+        $this->addColumn('publication_date', array(
+            'header'    => $this->_getTranslationHelper()->__('Publication Date'),
             'width'     => '30',
             'align'     => 'left',
-            'index'     => 'created_at',
+            'index'     => 'publication_date',
             'type'      => 'datetime'
+        ));
+
+        $this->addColumn('is_biased', array(
+            'header'    => $this->_getTranslationHelper()->__('Is Biased'),
+            'width'     => '30',
+            'align'     => 'left',
+            'index'     => 'is_biased',
+            'type'      => 'select',
+            'options'   => Mage::getModel('eav/entity_attribute_source_boolean')->getOptionArray()
         ));
 
         return parent::_prepareColumns();

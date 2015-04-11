@@ -37,6 +37,18 @@
         </resources>
     </global>
 
+    <admin>
+        <routers>
+            <worldview_feed>
+                <use>admin</use>
+                <args>
+                    <module>Worldview_Feed</module>
+                    <frontName>worldview_feed</frontName>
+                </args>
+            </worldview_feed>
+        </routers>
+    </admin>
+
     <default>
         <worldview>
             <feed>

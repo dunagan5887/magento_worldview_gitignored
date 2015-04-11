@@ -19,6 +19,7 @@ class Worldview_Feed_Helper_Article_Retrieval_Processor extends Worldview_Feed_H
     const RETRIEVAL_PROCESS_CLASSNAME_CONFIG = 'article_retrieval';
     const SOURCE_LOADER_DELEGATE_CODE = 'source_loader';
     const DATA_RETRIEVAL_DELEGATE_CODE = 'data_retriever';
+    const ARTICLE_PERSISTER_DELEGATE_CODE = 'article_persister';
 
     protected function _getProcessConfigurationSubPath()
     {
@@ -39,7 +40,10 @@ class Worldview_Feed_Helper_Article_Retrieval_Processor extends Worldview_Feed_H
 
         $dataRetrievalDelegate = $processModelToProcess->getDelegate(self::DATA_RETRIEVAL_DELEGATE_CODE);
         // TODO Check for correct interface for $dataRetrievalDelegate
-        $raw_article_data_by_source_code_array = $dataRetrievalDelegate->retrieveDataFromSourceCollection($sourceCollection);
+        $processed_article_data_by_source_code_array = $dataRetrievalDelegate->retrieveDataFromSourceCollection($sourceCollection);
+
+        $articlePersisterDelegate = $processModelToProcess->getDelegate(self::ARTICLE_PERSISTER_DELEGATE_CODE);
+        $articlePersistenceResult = $articlePersisterDelegate->persistArticles($processed_article_data_by_source_code_array, $sourceCollection);
     }
 
 

@@ -39,9 +39,9 @@ abstract class Dunagan_Base_Controller_Adminhtml_Abstract
 
     protected function _setSetupTitle($title)
     {
-        try {
-            $this->_title($this->__($this->getModuleInstanceDescription()))
-                ->_title($title);
+        try
+        {
+            $this->_title($title);
         }
         catch (Exception $e)
         {

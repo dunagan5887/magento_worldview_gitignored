@@ -16,7 +16,7 @@ class Worldview_Source_Helper_Raw_Data_Processor_Huffington_World
     public function getFieldConversionArray()
     {
         $conversion_array = $this->_base_conversion_array;
-        $conversion_array[self::AUTHOR_WORLDVIEW_APP_FIELD] = self::HUFFINGTON_POST_AUTHOR_FEED_FIELD;
+        $conversion_array[Worldview_Source_Helper_Data::AUTHOR_WORLDVIEW_APP_FIELD] = self::HUFFINGTON_POST_AUTHOR_FEED_FIELD;
 
         return $this->_base_conversion_array;
     }
