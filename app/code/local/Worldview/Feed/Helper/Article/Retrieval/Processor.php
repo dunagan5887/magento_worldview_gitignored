@@ -33,7 +33,6 @@ class Worldview_Feed_Helper_Article_Retrieval_Processor
         return 'worldview_feed/process_article_retrieval';
     }
 
-
     public function executeProcess($process_code, Dunagan_Base_Model_Process_Interface $processModelToProcess)
     {
         $sourceLoaderDelegate = $processModelToProcess->getDelegate(self::SOURCE_LOADER_DELEGATE_CODE);
@@ -43,10 +42,10 @@ class Worldview_Feed_Helper_Article_Retrieval_Processor
         $dataRetrievalDelegate = $processModelToProcess->getDelegate(self::DATA_RETRIEVAL_DELEGATE_CODE);
         // TODO Check for correct interface for $dataRetrievalDelegate
         $processed_article_data_by_source_code_array = $dataRetrievalDelegate->retrieveDataFromSourceCollection($sourceCollection);
-
+        // TODO Check for correct interface for $articlePersisterDelegate
         $articlePersisterDelegate = $processModelToProcess->getDelegate(self::ARTICLE_PERSISTER_DELEGATE_CODE);
         $articlePersisterResult = $articlePersisterDelegate->persistArticles($processed_article_data_by_source_code_array, $sourceCollection);
-
+        // TODO Check for correct interface for $feedResultsLogger
         $feedResultsLogger = $processModelToProcess->getDelegate(self::PROCESS_LOGGER_DELEGATE_CODE);
         $feedResultsLogger->compileLogFeedResults($articlePersisterResult, $sourceCollection);
 

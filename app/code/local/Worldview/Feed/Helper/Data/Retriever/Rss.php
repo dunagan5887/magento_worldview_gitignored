@@ -29,7 +29,9 @@ class Worldview_Feed_Helper_Data_Retriever_Rss
 
                 if (!is_object($rss_xml_object) || !is_object($rss_xml_object->channel))
                 {
+                    // TODO TEST THIS
                     $error_message = sprintf(self::ERROR_RSS_FEED_DID_NOT_PRODUCE_XML_OBJECT, $feed_source_code, $rss_url);
+                    $this->logErrorMessageWithProcessModel($feed_source_code, $error_message);
                     Mage::log($error_message);
                     $exceptionToLog = new Exception($error_message);
                     Mage::logException($exceptionToLog);
@@ -86,7 +88,22 @@ class Worldview_Feed_Helper_Data_Retriever_Rss
     protected function _processRawFeedData(Worldview_Source_Model_Source $feedSource, array $raw_feed_source_article_set)
     {
         $rawArticleDataProcessor = $feedSource->getRawDataProcessor();
-        $processed_article_data_array = $rawArticleDataProcessor->processRawArticleData($raw_feed_source_article_set);
+        $raw_article_processing_return = $rawArticleDataProcessor->processRawArticleData($raw_feed_source_article_set);
+        $processed_article_data_array = $raw_article_processing_return['processed_article_data_array'];
+        $exceptions_during_articles_processing = $raw_article_processing_return['exceptions_during_articles_processing'];
+
+        foreach ($exceptions_during_articles_processing as $exception_message)
+        {
+            $this->logErrorMessageWithProcessModel($feedSource->getCode(), $exception_message);
+        }
+
         return $processed_article_data_array;
+    }
+
+    public function logErrorMessageWithProcessModel($source_code, $error_message)
+    {
+        $processModel = $this->getDelegator();
+        $processModel->getDelegate('process_logger')
+                        ->logErrorRegardingSourceFeed($source_code, $error_message);
     }
 }

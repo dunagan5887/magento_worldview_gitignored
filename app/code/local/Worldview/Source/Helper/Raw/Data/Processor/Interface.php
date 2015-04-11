@@ -5,6 +5,7 @@
  */
 
 interface Worldview_Source_Helper_Raw_Data_Processor_Interface
+    extends Dunagan_Base_Model_Delegate_Interface
 {
     /**
      * This method takes an array. Each index of the array should be an array representing

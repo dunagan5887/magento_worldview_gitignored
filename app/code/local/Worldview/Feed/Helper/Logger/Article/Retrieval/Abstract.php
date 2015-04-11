@@ -18,6 +18,7 @@ abstract class Worldview_Feed_Helper_Logger_Article_Retrieval_Abstract
     const ERROR_ARTICLES_WITH_EXCEPTION = '%s articles from feed %s were unable to be saved to the database due to the following exceptions: %s';
     const ERROR_ARTICLE_LINK_AND_EXCEPTION = 'Articles with link %s had the following exception: %s';
 
+    protected $_errors_by_source_feed = array();
     protected $_source_model_by_code_array = array();
 
     public function compileLogFeedResults(Worldview_Feed_Helper_Article_Persister_Result $feedArticlePersisterResults,
@@ -33,9 +34,7 @@ abstract class Worldview_Feed_Helper_Logger_Article_Retrieval_Abstract
             array('data_array' => $feedArticlePersisterResults->getArticlesAlreadyPersisted(),
                 'method' => 'logArticlesAlreadyPersisted'),
             array('data_array' => $feedArticlePersisterResults->getArticlesMissingLinkArray(),
-                'method' => 'logArticlesMissingLink'),
-            array('data_array' => $feedArticlePersisterResults->getArticlesPersistException(),
-                'method' => 'logArticlesPersistingException'),
+                'method' => 'logArticlesMissingLink')
         );
 
         foreach ($sourceCollection as $sourceModel)
@@ -54,25 +53,47 @@ abstract class Worldview_Feed_Helper_Logger_Article_Retrieval_Abstract
                     $this->$method($source_code, $source_article_data_to_log);
                 }
             }
+
+            $article_persistence_exceptions_array = $feedArticlePersisterResults->getArticlesPersistException();
+            $this->logArticlesPersistingException($source_code, $article_persistence_exceptions_array);
         }
     }
 
     public function logArticlesPersistingException($source_code, $array_with_persisting_exception)
     {
-        $number_of_articles_with_exception = count($array_with_persisting_exception);
-        $source_name = $this->getSourceModelNameByCode($source_code);
-
-        $article_link_and_exception_message_array = array();
-        foreach ($array_with_persisting_exception as $article_link_and_exception_message)
+        if (!empty($array_with_persisting_exception))
         {
-            $exception_message = $article_link_and_exception_message['exception_message'];
-            $article_link = $article_link_and_exception_message['article_link'];
-            $error_message = sprintf(self::ERROR_ARTICLE_LINK_AND_EXCEPTION, $article_link, $exception_message);
-            $article_link_and_exception_message_array[] = $error_message;
+            $number_of_articles_with_exception = count($array_with_persisting_exception);
+            $source_name = $this->getSourceModelNameByCode($source_code);
+
+            $article_link_and_exception_message_array = array();
+            foreach ($array_with_persisting_exception as $article_link_and_exception_message)
+            {
+                $exception_message = $article_link_and_exception_message['exception_message'];
+                $article_link = $article_link_and_exception_message['article_link'];
+                $error_message = sprintf(self::ERROR_ARTICLE_LINK_AND_EXCEPTION, $article_link, $exception_message);
+                $article_link_and_exception_message_array[] = $error_message;
+            }
+
+            $exception_data_to_log = $this->getArticlesWithExceptionsMessage($article_link_and_exception_message_array, $source_name, $number_of_articles_with_exception);
+            if (!empty($exception_data_to_log))
+            {
+                $decorated_exception_message = $this->decorateErrorMessage($exception_data_to_log);
+                $this->_addDataToCurrentLogString($decorated_exception_message);
+            }
         }
 
-        $data_to_log = $this->getArticlesWithExceptionsMessage($article_link_and_exception_message_array, $source_name, $number_of_articles_with_exception);
-        $this->_addDataToCurrentLogString($data_to_log);
+        // Log any errors that were registered with this model
+        if(isset($this->_errors_by_source_feed[$source_code])
+            && is_array($this->_errors_by_source_feed[$source_code])
+        )
+        {
+            foreach ($this->_errors_by_source_feed[$source_code] as $exception_message)
+            {
+                $decorated_exception_message = $this->decorateErrorMessage($exception_message);
+                $this->_addDataToCurrentLogString($decorated_exception_message);
+            }
+        }
     }
 
     public function logArticlesMissingLink($source_code, $array_of_articles_missing_link)
@@ -113,9 +134,27 @@ abstract class Worldview_Feed_Helper_Logger_Article_Retrieval_Abstract
         {
             // For some subclasses of log, we'll want to log more of the article data which was returned that others
             $article_persisted_success_message = $this->getArticlePersistSuccessMessage($source_code, $persistedArticle);
-            $decorated_success_message = $this->decorateSuccessMessage($article_persisted_success_message);
-            $this->_addDataToCurrentLogString($decorated_success_message);
+            if (!empty($decorated_success_message))
+            {
+                $decorated_success_message = $this->decorateSuccessMessage($article_persisted_success_message);
+                $this->_addDataToCurrentLogString($decorated_success_message);
+            }
         }
+    }
+
+    public function logErrorRegardingSourceFeed($source_code, $error_message)
+    {
+        if (!isset($this->_errors_by_source_feed[$source_code]))
+        {
+            $this->_errors_by_source_feed[$source_code] = array();
+        }
+
+        $this->_errors_by_source_feed[$source_code][] = $error_message;
+    }
+
+    public function flushLogsBySourceFeedArray()
+    {
+        $this->_errors_by_source_feed = array();
     }
 
     protected function _initializeSourceModelByCodeArray(Worldview_Source_Model_Mysql4_Source_Collection $sourceCollection)
@@ -152,7 +191,6 @@ abstract class Worldview_Feed_Helper_Logger_Article_Retrieval_Abstract
     {
         $imploded_article_exception_string = implode($this->getLineSeparator(), $article_link_and_exception_message_array);
         $overall_articles_with_exception_message = sprintf(self::ERROR_ARTICLES_WITH_EXCEPTION, $number_of_articles_with_exception, $source_name, $imploded_article_exception_string);
-        $decorated_message = $this->decorateErrorMessage($overall_articles_with_exception_message);
-        return $decorated_message;
+        return $overall_articles_with_exception_message;
     }
 }

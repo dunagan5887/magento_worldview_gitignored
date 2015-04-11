@@ -9,7 +9,7 @@ abstract class Dunagan_Base_Helper_Processor_Abstract
     implements Dunagan_Base_Helper_Processor_Interface
 {
     const EXCEPTION_DURING_EXECUTE_PROCESSES = 'Exception occurred during execution of %s::executeProcesses() : %s';
-    const EXCEPTION_DURING_PROCESS_PROCESSING = 'An exception occurred while processed Process of class %s with code %s: %s';
+    const EXCEPTION_DURING_PROCESS_PROCESSING = 'An exception occurred while processing Process of class %s with code %s: %s';
     const ERROR_NO_HELPER_LOADED = 'Helper with classname %s could not be loaded';
     const EXCEPTION_COULD_NOT_SET_DELEGATE = 'An exception occurred while trying to set delegate with classname %s on process model with classname %s: %s';
 
@@ -25,13 +25,18 @@ abstract class Dunagan_Base_Helper_Processor_Abstract
         return true;
     }
 
+    /**
+     * @return array
+     * @throws Exception - We want to let the calling block decide how to handle the exception
+     */
     public function executeProcesses()
     {
+        $process_log_data_objects_array = array();
+
         try
         {
             $multiple_processes_are_configured = $this->areMultipleProcssesConfigured();
             $processesToLoadFromConfiguration = $this->loadProcessesFromConfigXml($multiple_processes_are_configured);
-            $process_log_data_objects_array = array();
 
             foreach ($processesToLoadFromConfiguration as $process_code => $processToExecute)
             {
@@ -46,6 +51,7 @@ abstract class Dunagan_Base_Helper_Processor_Abstract
                     Mage::log($error_message);
                     $exceptionToLog = new Exception($error_message, $e->getCode(), $e);
                     Mage::logException($exceptionToLog);
+                    throw $exceptionToLog;
                 }
 
             }
@@ -56,6 +62,7 @@ abstract class Dunagan_Base_Helper_Processor_Abstract
             Mage::log($error_message);
             $exceptionToLog = new Exception($error_message, $e->getCode(), $e);
             Mage::logException($exceptionToLog);
+            throw $exceptionToLog;
         }
 
         return $process_log_data_objects_array;
