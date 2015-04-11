@@ -14,12 +14,14 @@
  *
  * This helper will make use of the delegate software pattern to delegate these responsibilities to delegate helper classes
  */
-class Worldview_Feed_Helper_Article_Retrieval_Processor extends Worldview_Feed_Helper_Processor
+class Worldview_Feed_Helper_Article_Retrieval_Processor
+    extends Worldview_Feed_Helper_Processor
 {
     const RETRIEVAL_PROCESS_CLASSNAME_CONFIG = 'article_retrieval';
     const SOURCE_LOADER_DELEGATE_CODE = 'source_loader';
     const DATA_RETRIEVAL_DELEGATE_CODE = 'data_retriever';
     const ARTICLE_PERSISTER_DELEGATE_CODE = 'article_persister';
+    const PROCESS_LOGGER_DELEGATE_CODE = 'process_logger';
 
     protected function _getProcessConfigurationSubPath()
     {
@@ -43,44 +45,11 @@ class Worldview_Feed_Helper_Article_Retrieval_Processor extends Worldview_Feed_H
         $processed_article_data_by_source_code_array = $dataRetrievalDelegate->retrieveDataFromSourceCollection($sourceCollection);
 
         $articlePersisterDelegate = $processModelToProcess->getDelegate(self::ARTICLE_PERSISTER_DELEGATE_CODE);
-        $articlePersistenceResult = $articlePersisterDelegate->persistArticles($processed_article_data_by_source_code_array, $sourceCollection);
-    }
+        $articlePersisterResult = $articlePersisterDelegate->persistArticles($processed_article_data_by_source_code_array, $sourceCollection);
 
+        $feedResultsLogger = $processModelToProcess->getDelegate(self::PROCESS_LOGGER_DELEGATE_CODE);
+        $feedResultsLogger->compileLogFeedResults($articlePersisterResult, $sourceCollection);
 
-
-    public function retrieveFeedArticles()
-    {
-        $feedProcesses = $this->getAllFeedArticleRetrievalProcesses();
-
-        foreach ($feedProcesses as $feedProcess)
-        {
-            $feedSources = $feedProcess->getAllFeedSources();
-
-            foreach ($feedSources as $feedSource)
-            {
-                $articleCollection = $feedProcess->produceArticleCollectionFromFeedSource($feedSource);
-                $this->logArticlesRetrievedFromFeed($articleCollection, $feedSource);
-            }
-        }
-    }
-
-    public function logArticlesRetrievedFromFeed(Worldview_Feed_Source_Model_Mysql4_Source_Collection $articleCollection,
-                                                    Worldview_Feed_Source_Model_Source $feedSource)
-    {
-
-    }
-
-    public function getAllFeedRetrievalProcesses()
-    {
-        $retrieval_process_classnames = Mage::getStoreConfig(self::RETRIEVAL_PROCESS_CLASSNAMES_CONFIG);
-        $retrieval_process_array = array();
-
-        foreach ($retrieval_process_classnames as $retrieval_process_classname)
-        {
-            $processRetrievalHelper = Mage::helper($retrieval_process_classname);
-            $retrieval_process_array[] = $processRetrievalHelper;
-        }
-
-        return $retrieval_process_array;
+        return $feedResultsLogger;
     }
 }

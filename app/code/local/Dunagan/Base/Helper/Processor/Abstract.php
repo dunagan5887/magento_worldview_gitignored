@@ -5,7 +5,8 @@
  * Class Dunagan_Base_Helper_Process_Abstract
  */
 
-abstract class Dunagan_Base_Helper_Processor_Abstract implements Dunagan_Base_Helper_Processor_Interface
+abstract class Dunagan_Base_Helper_Processor_Abstract
+    implements Dunagan_Base_Helper_Processor_Interface
 {
     const EXCEPTION_DURING_EXECUTE_PROCESSES = 'Exception occurred during execution of %s::executeProcesses() : %s';
     const EXCEPTION_DURING_PROCESS_PROCESSING = 'An exception occurred while processed Process of class %s with code %s: %s';
@@ -30,12 +31,14 @@ abstract class Dunagan_Base_Helper_Processor_Abstract implements Dunagan_Base_He
         {
             $multiple_processes_are_configured = $this->areMultipleProcssesConfigured();
             $processesToLoadFromConfiguration = $this->loadProcessesFromConfigXml($multiple_processes_are_configured);
+            $process_log_data_objects_array = array();
 
             foreach ($processesToLoadFromConfiguration as $process_code => $processToExecute)
             {
                 try
                 {
-                    $this->executeProcess($process_code, $processToExecute);
+                    $processLogData = $this->executeProcess($process_code, $processToExecute);
+                    $process_log_data_objects_array[$process_code] = $processLogData;
                 }
                 catch(Exception $e)
                 {
@@ -54,6 +57,8 @@ abstract class Dunagan_Base_Helper_Processor_Abstract implements Dunagan_Base_He
             $exceptionToLog = new Exception($error_message, $e->getCode(), $e);
             Mage::logException($exceptionToLog);
         }
+
+        return $process_log_data_objects_array;
     }
 
     /**

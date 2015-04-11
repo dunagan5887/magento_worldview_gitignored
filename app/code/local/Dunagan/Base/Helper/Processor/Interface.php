@@ -15,7 +15,7 @@ interface Dunagan_Base_Helper_Processor_Interface
      *
      * @param string $process_code
      * @param Dunagan_Base_Model_Process_Interface $processModelToProcess
-     * @return mixed
+     * @return Dunagan_Base_Helper_Processor_Logger_Interface
      */
     public function executeProcess($process_code, Dunagan_Base_Model_Process_Interface $processModelToProcess);
 

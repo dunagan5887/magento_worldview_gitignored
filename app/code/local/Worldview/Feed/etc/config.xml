@@ -59,7 +59,7 @@
                                 <source_loader>worldview_feed/source_loader_by_source_type</source_loader>
                                 <data_retriever>worldview_feed/data_retriever_rss</data_retriever>
                                 <article_persister>worldview_feed/article_persister_base</article_persister>
-                                <process_logger>worldview_feed/logger_retrieval_file_text</process_logger>
+                                <process_logger>worldview_feed/logger_article_retrieval_html</process_logger>
                             </delegates>
                             <data/>
                         </RSS>

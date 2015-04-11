@@ -64,12 +64,14 @@ class Worldview_Feed_Helper_Article_Persister_Base
         {   // TODO TEST THIS
             // Don't persist an article without a link
             $articlePersisterResultModel->addArticleMissingLink($sourceModel, $processed_articles_data_array);
+            return;
         }
 
         if (in_array($article_link, $this->_array_of_already_persisted_links))
         {
             // Don't persist an article which is already in the database
             $articlePersisterResultModel->addArticleAlreadyPersisted($sourceModel, $processed_articles_data_array);
+            return;
         }
 
         try

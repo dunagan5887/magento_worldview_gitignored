@@ -5,7 +5,8 @@
  *
  * class Worldview_Feed_Helper_Processor
  */
-abstract class Worldview_Feed_Helper_Processor extends Dunagan_Base_Helper_Processor_Abstract
+abstract class Worldview_Feed_Helper_Processor
+    extends Dunagan_Base_Helper_Processor_Abstract
 {
     const WORLDVIEW_FEED_PROCESS_CONFIGURATION_PATH = 'worldview/feed/process';
 

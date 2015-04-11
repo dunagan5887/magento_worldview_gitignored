@@ -7,6 +7,7 @@ class Worldview_Feed_Model_Cron
 {
     public function cronRetrieveArticlesFromFeed()
     {
-        Mage::helper('worldview_feed/retrieval_processor')->retrieveFeedArticles();
+        $helper = Mage::helper('worldview_feed/article_retrieval_processor');
+        $helper->executeProcesses();
     }
 }
