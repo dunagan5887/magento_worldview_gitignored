@@ -53,11 +53,11 @@ responsibilities of dispatching requests. While a good deal of functionality is 
 (e.g. validating form keys, loading page layout, verifying ACL permissions) there is a good deal of functionality
 which can further by implemented to save subclasses the trouble of needing to implement logic which can be
 templated. Dunagan_Base_Controller_Adminhtml_Form_Abstract implements a great deal of functionality that is
-commonly used by controllers which display a data form and execute CRUD functionality. Classes extending this
-class can accomplish a great deal of functionality while defining/implementing minimal logic. As per the template
-method, Dunagan_Base_Controller_Adminhtml_Form_Abstract allows for the redefining of tasks by overriding the
-parent class’s methods. It also declares validateDataAndCreateObject() and validateDataAndUpdateObject() as
-abstract due to the fact that each individual subclass will likely have very specific data points to check and
+commonly used by controllers which display a data form and execute CRUD functionality (deletion has not been implemented
+yet). Subclasses extending this class can accomplish a great deal of functionality while defining/implementing minimal
+logic. As per the template method, Dunagan_Base_Controller_Adminhtml_Form_Abstract allows for the redefining of tasks by
+overriding the parent class’s methods. It also declares validateDataAndCreateObject() and validateDataAndUpdateObject()
+as abstract due to the fact that each individual subclass will likely have very specific data points to check and
 validate. However it does provide methods _assertDataIsRestrictedToFields() and _assertRequiredFieldsAreIncluded()
 to handle the very common tasks of verifying that certain data points have been passed in and others have not
 been tampered with. As a result of the abstract template, classes Worldview_Article_IndexController and
